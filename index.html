@@ -133,6 +133,21 @@
   .btn-cancelar { flex: 1; padding: 9px; border: 1px solid var(--gris-b); border-radius: 8px; background: var(--blanco); font-size: 13px; cursor: pointer; color: var(--gris-s); }
   .btn-guardar { flex: 2; padding: 9px; border: none; border-radius: 8px; background: var(--azul); font-size: 13px; font-weight: 600; cursor: pointer; color: white; }
 
+  .sem-btn { font-size: 12px; font-weight: 500; padding: 6px 14px; border-radius: 20px; border: 1px solid var(--gris-b); background: var(--gris-f); color: var(--gris-s); cursor: pointer; transition: all .15s; }
+  .sem-btn.active { background: var(--azul); color: white; border-color: var(--azul); }
+  .sem-btn:hover:not(.active) { background: var(--azul-bg); color: var(--azul-txt); border-color: var(--azul-claro); }
+  .epi-row { display: flex; align-items: center; gap: 10px; padding: 7px 0; border-bottom: 1px solid var(--gris-b); }
+  .epi-row:last-child { border-bottom: none; }
+  .epi-check { width: 20px; height: 20px; border-radius: 4px; border: 2px solid var(--gris-b); cursor: pointer; flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: all .15s; }
+  .epi-check.ok { background: var(--verde); border-color: var(--verde); }
+  .epi-nom { font-size: 12px; color: var(--gris); flex: 1; }
+  .prest-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 6px 8px; background: var(--gris-f); border-radius: 6px; margin-bottom: 4px; font-size: 12px; }
+  .prest-alumno { color: var(--azul-txt); font-weight: 500; }
+  .btn-dev { font-size: 11px; padding: 2px 8px; border-radius: 6px; border: 1px solid #86efac; background: #dcfce7; color: #15803d; cursor: pointer; }
+  .rot-row { display: grid; grid-template-columns: 80px 1fr 1fr; gap: 6px; padding: 6px 0; border-bottom: 1px solid var(--gris-b); font-size: 12px; align-items: center; }
+  .rot-row:last-child { border-bottom: none; }
+  .rot-sem { font-weight: 600; color: var(--gris-s); font-size: 11px; }
+  .rot-equipo { color: var(--azul); font-weight: 500; }
   .leyenda { margin-top: 20px; padding: 12px 14px; background: var(--blanco); border: 1px solid var(--gris-b); border-radius: var(--radio); font-size: 12px; color: var(--gris-s); line-height: 1.6; }
   .leyenda-fila { display: flex; align-items: center; gap: 8px; margin-top: 4px; }
   .dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
@@ -183,6 +198,20 @@
 </div>
 
 <div class="contenido">
+<div class="contenido">
+
+  <!-- PESTAÑAS -->
+  <div style="display:flex;gap:0;margin-bottom:14px;background:var(--blanco);border:1px solid var(--gris-b);border-radius:var(--radio);overflow:hidden">
+    <button id="tab-inv" onclick="showTab('inventario')" style="flex:1;padding:10px 0;font-size:13px;font-weight:600;border:none;cursor:pointer;background:var(--azul);color:white;display:flex;align-items:center;justify-content:center;gap:6px">
+      <i class="ti ti-tools" style="font-size:15px"></i>Inventario
+    </button>
+    <button id="tab-pan" onclick="showTab('panoleria')" style="flex:1;padding:10px 0;font-size:13px;font-weight:600;border:none;cursor:pointer;background:var(--blanco);color:var(--gris-s);display:flex;align-items:center;justify-content:center;gap:6px">
+      <i class="ti ti-key" style="font-size:15px"></i>Pañolería
+    </button>
+  </div>
+
+  <!-- PESTAÑA INVENTARIO -->
+  <div id="tab-inventario">
 
   <div class="resumen">
     <div class="res-card"><div class="res-num" style="color:var(--verde)">22</div><div class="res-lbl">Disponibles</div></div>
@@ -581,6 +610,88 @@
     <div class="registro" id="reg-eq8"></div>
   </div>
 
+
+  </div><!-- fin tab-inventario -->
+
+  <!-- PESTAÑA PAÑOLERÍA -->
+  <div id="tab-panoleria" style="display:none">
+  <!-- ═══════════ PAÑOLERÍA ═══════════ -->
+  <div class="seccion-lbl" style="margin-top:24px">Pañolería · Gestión semanal</div>
+
+  <div style="background:var(--blanco);border:1px solid var(--gris-b);border-radius:var(--radio);padding:14px;margin-bottom:8px">
+    <div style="font-size:12px;font-weight:600;color:var(--gris);margin-bottom:10px">Semana activa de la UT1</div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap" id="sem-tabs"></div>
+  </div>
+
+  <div style="background:var(--blanco);border:2px solid var(--azul-claro);border-radius:var(--radio);padding:14px;margin-bottom:8px">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+      <div style="width:38px;height:38px;background:#dbeafe;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+        <i class="ti ti-users" style="font-size:20px;color:var(--azul-txt)"></i>
+      </div>
+      <div>
+        <div style="font-size:14px;font-weight:600;color:var(--azul)" id="equipo-nombre">Equipo 1</div>
+        <div style="font-size:11px;color:var(--gris-s)">Pañoleros esta semana</div>
+      </div>
+      <span class="bdg bdg-uso" style="margin-left:auto">Pañoleros</span>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px" id="equipo-miembros"></div>
+  </div>
+
+  <div style="background:var(--blanco);border:1px solid var(--gris-b);border-radius:var(--radio);padding:14px;margin-bottom:8px">
+    <div style="font-size:13px;font-weight:600;color:var(--gris);margin-bottom:10px;display:flex;align-items:center;gap:8px">
+      <i class="ti ti-shield-check" style="color:var(--verde);font-size:18px"></i>
+      Verificación de EPIs · <span id="epi-fecha" style="font-weight:400;color:var(--gris-s)"></span>
+    </div>
+    <div id="epi-lista"></div>
+    <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn-registrar" onclick="marcarTodosEpis()"><i class="ti ti-check"></i>Todos correctos</button>
+      <button class="btn-problema" onclick="resetEpis()"><i class="ti ti-x"></i>Resetear</button>
+    </div>
+    <div id="epi-estado" style="display:none;margin-top:8px;font-size:12px;padding:6px 10px;border-radius:6px;background:#dcfce7;color:#15803d;font-weight:500">
+      <i class="ti ti-circle-check" style="font-size:13px;vertical-align:-2px"></i> EPIs verificados — acceso al taller autorizado
+    </div>
+    <div id="epi-alerta" style="display:none;margin-top:8px;font-size:12px;padding:6px 10px;border-radius:6px;background:#fee2e2;color:#b91c1c;font-weight:500">
+      <i class="ti ti-alert-triangle" style="font-size:13px;vertical-align:-2px"></i> EPIs incompletos — acceso NO autorizado
+    </div>
+  </div>
+
+  <div style="background:var(--blanco);border:1px solid var(--gris-b);border-radius:var(--radio);padding:14px;margin-bottom:8px">
+    <div style="font-size:13px;font-weight:600;color:var(--gris);margin-bottom:10px;display:flex;align-items:center;gap:8px">
+      <i class="ti ti-clipboard-list" style="color:var(--azul-claro);font-size:18px"></i>
+      Registro de préstamo de herramientas
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr auto;gap:6px;margin-bottom:8px;align-items:end">
+      <div>
+        <div style="font-size:11px;color:var(--gris-s);margin-bottom:3px">Alumno / correo educantabria</div>
+        <input id="prest-alumno" class="campo" style="margin:0" type="text" placeholder="usuario@educantabria.es">
+      </div>
+      <div>
+        <div style="font-size:11px;color:var(--gris-s);margin-bottom:3px">Herramienta o equipo</div>
+        <input id="prest-herr" class="campo" style="margin:0" type="text" placeholder="Ej: Calibre pie de rey">
+      </div>
+      <button class="btn-registrar" style="margin:0;height:36px" onclick="registrarPrestamo()"><i class="ti ti-arrow-bar-right"></i>Préstamo</button>
+    </div>
+    <div id="prestamos-lista">
+      <div style="padding:8px;background:var(--gris-f);border-radius:6px;text-align:center;color:var(--gris-s);font-size:12px">Sin préstamos activos esta sesión</div>
+    </div>
+    <div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--gris-b)">
+      <button onclick="cerrarSesion()" style="font-size:12px;font-weight:600;color:white;background:var(--azul);border:none;border-radius:8px;padding:8px 16px;cursor:pointer;display:flex;align-items:center;gap:6px;width:100%;justify-content:center">
+        <i class="ti ti-lock"></i>Cerrar sesión del taller y generar resumen
+      </button>
+    </div>
+    <div id="resumen-sesion" style="display:none;margin-top:10px;background:#f0f9ff;border:1px solid #7dd3fc;border-radius:8px;padding:10px;font-size:12px;color:#0369a1;line-height:1.6"></div>
+  </div>
+
+  <div style="background:var(--blanco);border:1px solid var(--gris-b);border-radius:var(--radio);padding:14px;margin-bottom:8px">
+    <div style="font-size:13px;font-weight:600;color:var(--gris);margin-bottom:12px;display:flex;align-items:center;gap:8px">
+      <i class="ti ti-rotate-clockwise" style="color:var(--ambar);font-size:18px"></i>
+      Rotación de equipos · UT1 completa
+    </div>
+    <div id="rotacion-tabla"></div>
+  </div>
+
+  </div><!-- fin tab-panoleria -->
+
   <!-- LEYENDA -->
   <div class="leyenda" style="margin-top:18px">
     <strong>Estado de los equipos</strong>
@@ -602,6 +713,16 @@
 </div>
 
 <script>
+  // ═══════════ PESTAÑAS ═══════════
+  function showTab(tab) {
+    document.getElementById("tab-inventario").style.display = tab === "inventario" ? "block" : "none";
+    document.getElementById("tab-panoleria").style.display  = tab === "panoleria"  ? "block" : "none";
+    document.getElementById("tab-inv").style.background = tab === "inventario" ? "var(--azul)" : "var(--blanco)";
+    document.getElementById("tab-inv").style.color      = tab === "inventario" ? "white" : "var(--gris-s)";
+    document.getElementById("tab-pan").style.background = tab === "panoleria"  ? "var(--azul)" : "var(--blanco)";
+    document.getElementById("tab-pan").style.color      = tab === "panoleria"  ? "white" : "var(--gris-s)";
+  }
+
   // Toggle paneles
   function togglePanel(id) {
     const body = document.getElementById(id);
@@ -660,6 +781,158 @@
     cerrarModal();
   }
 
+
+  // ═══════════ PAÑOLERÍA ═══════════
+  const equipos = [
+    { nombre: 'Equipo 1 — Los Ebros',      miembros: ['Alba García', 'Carlos Ruiz', 'Diego Martín', 'Elena Sanz'] },
+    { nombre: 'Equipo 2 — Los Massey',      miembros: ['Fran López', 'Gema Torres', 'Hugo Pérez', 'Irene Vega'] },
+    { nombre: 'Equipo 3 — Los New Holland',       miembros: ['Javier Mora', 'Laura Gil', 'Miguel Ramos', 'Nuria Blanco'] },
+    { nombre: 'Equipo 4 — Los Valtra',       miembros: ['Óscar Fuentes', 'Paula Jiménez', 'Raúl Cano', 'Sara Molina'] },
+    { nombre: 'Equipo 5 — Los Kubota',  miembros: ['Tomás Herrera', 'Uxía Castro', 'Víctor Leal', 'Yolanda Pons'] },
+  ];
+
+  const semRotacion = [0, 1, 2, 3, 4]; // Sem1→Equipo1, Sem2→Equipo2...
+
+  const epis = [
+    { nom: 'Ropa de trabajo adecuada', obs: 'Sin ropa suelta, sin corbata ni bufanda' },
+    { nom: 'Calzado de seguridad (punta y suela reforzada)', obs: 'Sin zapatillas deportivas' },
+    { nom: 'Gafas de protección', obs: 'Al usar esmeril, taladro o radial' },
+    { nom: 'Guantes de trabajo', obs: 'Según la tarea — no en taladro' },
+    { nom: 'Protección auditiva', obs: 'Si hay ruido superior a 85 dB' },
+    { nom: 'Cabello recogido / sin anillos ni pulseras', obs: 'Riesgo de atrapamiento' },
+    { nom: 'Extintor accesible y señalizado', obs: 'Comprobar precinto' },
+    { nom: 'Botiquín visible y completo', obs: 'Revisar caducidades' },
+  ];
+
+  let semActual = 1;
+  let epiEstado = {};
+  let prestamos = [];
+
+  function setSemana(n) {
+    semActual = n;
+    document.querySelectorAll('.sem-btn').forEach((b, i) => b.classList.toggle('active', i + 1 === n));
+    const eq = equipos[semRotacion[n - 1]];
+    document.getElementById('equipo-nombre').textContent = eq.nombre;
+    const mDiv = document.getElementById('equipo-miembros');
+    mDiv.innerHTML = eq.miembros.map(m =>
+      `<div style="background:var(--gris-f);border:1px solid var(--gris-b);border-radius:6px;padding:6px 10px;font-size:12px;display:flex;align-items:center;gap:6px">
+        <i class="ti ti-user" style="font-size:14px;color:var(--azul-claro)"></i>${m}
+      </div>`
+    ).join('');
+    renderRotacion();
+  }
+
+  function renderEpis() {
+    const hoy = new Date().toLocaleDateString('es-ES', {day:'2-digit', month:'long', year:'numeric'});
+    document.getElementById('epi-fecha').textContent = hoy;
+    const lista = document.getElementById('epi-lista');
+    lista.innerHTML = epis.map((e, i) => `
+      <div class="epi-row">
+        <div class="epi-check ${epiEstado[i] ? 'ok' : ''}" id="epi-${i}" onclick="toggleEpi(${i})"></div>
+        <span class="epi-nom">${e.nom}</span>
+        <span style="font-size:10px;color:var(--gris-s)">${e.obs}</span>
+      </div>`).join('');
+    checkEpiTotal();
+  }
+
+  function toggleEpi(i) {
+    epiEstado[i] = !epiEstado[i];
+    const el = document.getElementById('epi-' + i);
+    el.classList.toggle('ok', epiEstado[i]);
+    checkEpiTotal();
+  }
+
+  function marcarTodosEpis() {
+    epis.forEach((_, i) => { epiEstado[i] = true; });
+    renderEpis();
+  }
+
+  function resetEpis() {
+    epiEstado = {};
+    renderEpis();
+  }
+
+  function checkEpiTotal() {
+    const total = epis.length;
+    const marcados = Object.values(epiEstado).filter(Boolean).length;
+    document.getElementById('epi-estado').style.display = marcados === total ? 'block' : 'none';
+    document.getElementById('epi-alerta').style.display = (marcados > 0 && marcados < total) ? 'block' : 'none';
+  }
+
+  function registrarPrestamo() {
+    const alumno = document.getElementById('prest-alumno').value.trim();
+    const herr   = document.getElementById('prest-herr').value.trim();
+    if (!alumno || !herr) return;
+    const hora = new Date().toLocaleTimeString('es-ES', {hour:'2-digit', minute:'2-digit'});
+    prestamos.push({ alumno, herr, hora, devuelto: false });
+    document.getElementById('prest-alumno').value = '';
+    document.getElementById('prest-herr').value = '';
+    renderPrestamos();
+  }
+
+  function devolver(i) {
+    prestamos[i].devuelto = true;
+    renderPrestamos();
+  }
+
+  function renderPrestamos() {
+    const lista = document.getElementById('prestamos-lista');
+    const activos = prestamos.filter(p => !p.devuelto);
+    if (!activos.length && prestamos.length === 0) {
+      lista.innerHTML = '<div style="padding:8px;background:var(--gris-f);border-radius:6px;text-align:center;color:var(--gris-s);font-size:12px">Sin préstamos activos esta sesión</div>';
+      return;
+    }
+    lista.innerHTML = prestamos.map((p, i) => `
+      <div class="prest-row" style="${p.devuelto ? 'opacity:.5;text-decoration:line-through' : ''}">
+        <span class="prest-alumno">${p.alumno}</span>
+        <span style="flex:1;padding:0 8px;color:var(--gris);font-size:12px">${p.herr}</span>
+        <span style="font-size:11px;color:var(--gris-s)">${p.hora}</span>
+        ${!p.devuelto ? `<button class="btn-dev" onclick="devolver(${i})">Devuelto</button>` : '<span style="font-size:11px;color:var(--verde-txt)">✓ Dev.</span>'}
+      </div>`).join('');
+  }
+
+  function cerrarSesion() {
+    const eq = equipos[semRotacion[semActual - 1]];
+    const hoy = new Date().toLocaleDateString('es-ES', {day:'2-digit', month:'long', year:'numeric'});
+    const epiOk = Object.values(epiEstado).filter(Boolean).length === epis.length;
+    const pendientes = prestamos.filter(p => !p.devuelto);
+    const res = document.getElementById('resumen-sesion');
+    res.style.display = 'block';
+    res.innerHTML = `<strong>Resumen sesión — ${hoy}</strong><br>
+      Pañoleros: ${eq.nombre}<br>
+      EPIs: ${epiOk ? '✅ Todos correctos' : '⚠️ Verificación incompleta'}<br>
+      Préstamos registrados: ${prestamos.length} · Pendientes de devolución: ${pendientes.length}<br>
+      ${pendientes.length ? '<strong style="color:#b91c1c">⚠️ Herramientas sin devolver: ' + pendientes.map(p => p.herr + ' (' + p.alumno + ')').join(', ') + '</strong>' : '✅ Todas las herramientas devueltas'}<br>
+      <em style="color:#7dd3fc">Sesión cerrada — datos para trasladar al registro de SharePoint</em>`;
+  }
+
+  function renderRotacion() {
+    const tabla = document.getElementById('rotacion-tabla');
+    tabla.innerHTML = equipos.map((eq, i) => {
+      const activo = semActual === i + 1;
+      return `<div class="rot-row" style="${activo ? 'background:#eff6ff;border-radius:6px;padding:6px 8px;' : ''}">
+        <span class="rot-sem">${activo ? '▶ ' : ''}Sem. ${i + 1}</span>
+        <span class="rot-equipo" style="${activo ? 'color:var(--azul);' : ''}">${eq.nombre}</span>
+        <span style="font-size:11px;color:var(--gris-s)">${eq.miembros.join(' · ')}</span>
+      </div>`;
+    }).join('');
+  }
+
+  // Inicializar
+  (function init() {
+    // Botones de semana
+    const tabs = document.getElementById('sem-tabs');
+    for (let i = 1; i <= 5; i++) {
+      const b = document.createElement('button');
+      b.className = 'sem-btn' + (i === 1 ? ' active' : '');
+      b.textContent = 'Sem. ' + i;
+      b.onclick = () => setSemana(i);
+      tabs.appendChild(b);
+    }
+    setSemana(1);
+    renderEpis();
+    renderPrestamos();
+  })();
   document.getElementById('modal').addEventListener('click', function(e) {
     if (e.target === this) cerrarModal();
   });
