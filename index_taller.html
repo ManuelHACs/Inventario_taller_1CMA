@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Taller Conectado · Inventariado inteligente en la nube</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
+<style>
+  :root {
+    --azul: #1a3a5c;
+    --azul-medio: #2a5a9a;
+    --azul-claro: #4a9fd4;
+    --verde: #16a34a;
+    --verde-bg: #dcfce7;
+    --verde-txt: #15803d;
+    --rojo: #dc2626;
+    --rojo-bg: #fee2e2;
+    --rojo-txt: #b91c1c;
+    --ambar: #d97706;
+    --ambar-bg: #fef3c7;
+    --ambar-txt: #92400e;
+    --azul-bg: #eff6ff;
+    --azul-txt: #1d4ed8;
+    --gris: #374151;
+    --gris-s: #6b7280;
+    --gris-b: #e5e7eb;
+    --gris-f: #f9fafb;
+    --blanco: #ffffff;
+    --radio: 10px;
+    --fuente: 'Segoe UI', system-ui, sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--fuente); background: #eef2f7; color: var(--gris); min-height: 100vh; padding-bottom: 2rem; }
+
+  .autoria { background: #0d1b2e; padding: 5px 1.25rem; text-align: center; font-size: 10px; color: #3a5a7a; letter-spacing: .04em; line-height: 1.6; position: sticky; top: 0; z-index: 11; }
+  .autoria strong { color: #4a9fd4; font-weight: 600; }
+
+  .cabecera { background: var(--azul); padding: 1.25rem 1.25rem 1rem; color: white; position: sticky; top: 26px; z-index: 10; }
+  .cab-inner { max-width: 720px; margin: 0 auto; display: flex; align-items: center; gap: 12px; }
+  .cab-ico { width: 46px; height: 46px; background: var(--azul-medio); border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .cab-ico i { font-size: 22px; color: var(--azul-claro); }
+  .cab-titulo { font-size: 17px; font-weight: 600; line-height: 1.2; }
+  .cab-sub { font-size: 12px; color: var(--azul-claro); margin-top: 2px; }
+  .cab-pill { margin-left: auto; background: #0d1b2e; color: var(--azul-claro); font-size: 11px; padding: 4px 10px; border-radius: 20px; white-space: nowrap; display: flex; align-items: center; gap: 4px; flex-shrink: 0; }
+
+  .contenido { max-width: 720px; margin: 0 auto; padding: 1rem 1rem 0; }
+
+  .resumen { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 12px; }
+  .res-card { background: var(--blanco); border: 1px solid var(--gris-b); border-radius: var(--radio); padding: 10px 12px; text-align: center; }
+  .res-num { font-size: 22px; font-weight: 700; }
+  .res-lbl { font-size: 10px; color: var(--gris-s); text-transform: uppercase; letter-spacing: .05em; margin-top: 2px; }
+
+  .seccion-lbl { font-size: 11px; font-weight: 600; color: var(--gris-s); text-transform: uppercase; letter-spacing: .07em; margin: 16px 0 6px; padding-left: 2px; }
+
+  /* PANELES */
+  .panel { background: var(--blanco); border: 1px solid var(--gris-b); border-radius: var(--radio); padding: 12px 14px; margin-bottom: 6px; }
+  .panel-hdr { display: flex; align-items: center; gap: 10px; justify-content: space-between; cursor: pointer; }
+  .panel-izq { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; }
+  .panel-ico { width: 36px; height: 36px; background: var(--azul-bg); border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .panel-ico i { font-size: 18px; color: var(--azul-txt); }
+  .panel-titulo { font-size: 14px; font-weight: 600; color: var(--gris); }
+  .panel-sub { font-size: 11px; color: var(--gris-s); margin-top: 2px; }
+  .panel-der { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+  .panel-body { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--gris-b); display: none; }
+  .panel-body.open { display: block; }
+
+  /* Herramientas dentro del panel */
+  .herr-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+  .herr { background: var(--gris-f); border: 1px solid var(--gris-b); border-radius: 8px; padding: 8px 10px; display: flex; align-items: center; justify-content: space-between; gap: 6px; }
+  .herr-nom { font-size: 12px; color: var(--gris); font-weight: 500; flex: 1; min-width: 0; }
+  .herr-est { font-size: 10px; font-weight: 600; padding: 2px 7px; border-radius: 20px; white-space: nowrap; }
+  .est-ok { background: var(--verde-bg); color: var(--verde-txt); }
+  .est-falta { background: var(--rojo-bg); color: var(--rojo-txt); }
+  .est-revision { background: var(--ambar-bg); color: var(--ambar-txt); }
+
+  /* FICHAS DE EQUIPO */
+  .equipo { background: var(--blanco); border: 1px solid var(--gris-b); border-left: 4px solid transparent; border-radius: var(--radio); padding: 12px 14px; margin-bottom: 6px; }
+  .equipo.disponible { border-left-color: var(--verde); }
+  .equipo.en-uso { border-left-color: var(--azul-claro); }
+  .equipo.revision { border-left-color: var(--ambar); }
+  .equipo.averia { border-left-color: var(--rojo); background: var(--rojo-bg); }
+
+  .eq-hdr { display: flex; align-items: flex-start; gap: 10px; justify-content: space-between; }
+  .eq-izq { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; }
+  .eq-ico { width: 40px; height: 40px; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; background: var(--gris-f); }
+  .eq-ico i { font-size: 20px; }
+  .equipo.disponible .eq-ico i { color: var(--verde); }
+  .equipo.en-uso .eq-ico i { color: var(--azul-claro); }
+  .equipo.revision .eq-ico i { color: var(--ambar); }
+  .equipo.averia .eq-ico i { color: var(--rojo); }
+
+  .eq-titulo { font-size: 14px; font-weight: 600; color: var(--gris); }
+  .equipo.averia .eq-titulo { color: var(--rojo-txt); }
+  .eq-modelo { font-size: 11px; color: var(--gris-s); margin-top: 1px; }
+
+  .eq-der { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; flex-shrink: 0; }
+
+  .bdg { font-size: 11px; font-weight: 500; padding: 3px 9px; border-radius: 20px; white-space: nowrap; }
+  .bdg-ok { background: var(--verde-bg); color: var(--verde-txt); }
+  .bdg-uso { background: #dbeafe; color: #1e40af; }
+  .bdg-rev { background: var(--ambar-bg); color: var(--ambar-txt); }
+  .bdg-av { background: var(--rojo-bg); color: var(--rojo-txt); }
+
+  .btn-manual { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 500; color: var(--azul-txt); background: var(--azul-bg); border: 1px solid #bfdbfe; border-radius: 6px; padding: 3px 8px; text-decoration: none; white-space: nowrap; }
+  .btn-manual:hover { background: #dbeafe; }
+  .btn-manual i { font-size: 12px; }
+
+  .eq-info { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--gris-b); }
+  .eq-dato { font-size: 11px; }
+  .eq-dato-lbl { color: var(--gris-s); }
+  .eq-dato-val { color: var(--gris); font-weight: 500; }
+
+  .btn-problema { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 500; color: var(--rojo-txt); background: var(--rojo-bg); border: 1px solid #fca5a5; border-radius: 6px; padding: 3px 8px; cursor: pointer; margin-top: 8px; }
+  .btn-problema:hover { background: #fecaca; }
+
+  .btn-registrar { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 500; color: var(--verde-txt); background: var(--verde-bg); border: 1px solid #86efac; border-radius: 6px; padding: 3px 8px; cursor: pointer; margin-top: 8px; margin-left: 4px; }
+  .btn-registrar:hover { background: #bbf7d0; }
+
+  .reporte { display: none; background: var(--rojo-bg); border: 1px solid #fca5a5; border-radius: 8px; padding: 8px 10px; margin-top: 8px; font-size: 11px; color: var(--rojo-txt); line-height: 1.5; }
+  .registro { display: none; background: #f0f9ff; border: 1px solid #7dd3fc; border-radius: 8px; padding: 8px 10px; margin-top: 8px; font-size: 11px; color: #0369a1; line-height: 1.5; }
+
+  /* Modal */
+  .modal-fondo { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.45); z-index: 100; align-items: center; justify-content: center; padding: 1rem; }
+  .modal-fondo.visible { display: flex; }
+  .modal { background: var(--blanco); border-radius: 14px; padding: 1.25rem; width: 100%; max-width: 380px; }
+  .modal-titulo { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
+  .modal-sub { font-size: 12px; color: var(--gris-s); margin-bottom: 14px; line-height: 1.4; }
+  .campo-lbl { font-size: 12px; font-weight: 500; color: var(--gris); margin-bottom: 4px; display: block; }
+  .campo { width: 100%; border: 1px solid var(--gris-b); border-radius: 8px; padding: 8px 10px; font-size: 13px; font-family: var(--fuente); color: var(--gris); margin-bottom: 10px; outline: none; }
+  .campo:focus { border-color: #86efac; }
+  textarea.campo { resize: vertical; min-height: 64px; }
+  .modal-bots { display: flex; gap: 8px; margin-top: 4px; }
+  .btn-cancelar { flex: 1; padding: 9px; border: 1px solid var(--gris-b); border-radius: 8px; background: var(--blanco); font-size: 13px; cursor: pointer; color: var(--gris-s); }
+  .btn-guardar { flex: 2; padding: 9px; border: none; border-radius: 8px; background: var(--azul); font-size: 13px; font-weight: 600; cursor: pointer; color: white; }
+
+  .leyenda { margin-top: 20px; padding: 12px 14px; background: var(--blanco); border: 1px solid var(--gris-b); border-radius: var(--radio); font-size: 12px; color: var(--gris-s); line-height: 1.6; }
+  .leyenda-fila { display: flex; align-items: center; gap: 8px; margin-top: 4px; }
+  .dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .pie { max-width: 720px; margin: 16px auto 0; padding: 14px; background: var(--blanco); border: 1px solid var(--gris-b); border-radius: var(--radio); font-size: 11px; color: var(--gris-s); line-height: 1.6; }
+  .pie strong { color: var(--gris); }
+
+  @media (max-width: 480px) {
+    .resumen { grid-template-columns: repeat(2,1fr); }
+    .herr-grid { grid-template-columns: 1fr; }
+    .eq-info { grid-template-columns: 1fr; }
+    .btn-manual span { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- MODAL -->
+<div class="modal-fondo" id="modal">
+  <div class="modal">
+    <div class="modal-titulo" id="modal-titulo">Registrar intervención</div>
+    <div class="modal-sub" id="modal-sub"></div>
+    <label class="campo-lbl">Nombre / correo educantabria</label>
+    <input class="campo" id="inp-nombre" type="text" placeholder="Nombre completo o usuario@educantabria.es">
+    <label class="campo-lbl">Fecha</label>
+    <input class="campo" id="inp-fecha" type="date">
+    <label class="campo-lbl">Observaciones</label>
+    <textarea class="campo" id="inp-obs" placeholder="Descripción del trabajo realizado, materiales empleados..."></textarea>
+    <div class="modal-bots">
+      <button class="btn-cancelar" onclick="cerrarModal()">Cancelar</button>
+      <button class="btn-guardar" onclick="guardarModal()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<div class="autoria">
+  Formulario demostrativo · Proc. Selectivo Ingreso · <strong>Cuerpo 0590 · Esp. 216 · Operaciones y Equipos de Producción Agraria</strong> · <strong>Manuel Ángel Alcántara Izquierdo</strong> · CIFP La Granja
+</div>
+
+<div class="cabecera">
+  <div class="cab-inner">
+    <div class="cab-ico"><i class="ti ti-tool"></i></div>
+    <div>
+      <div class="cab-titulo">Taller Conectado</div>
+      <div class="cab-sub">Inventariado inteligente en la nube · CIFP La Granja</div>
+    </div>
+    <div class="cab-pill"><i class="ti ti-circle-check" style="font-size:11px"></i>Activo</div>
+  </div>
+</div>
+
+<div class="contenido">
+
+  <div class="resumen">
+    <div class="res-card"><div class="res-num" style="color:var(--verde)">22</div><div class="res-lbl">Disponibles</div></div>
+    <div class="res-card"><div class="res-num" style="color:var(--azul-claro)">3</div><div class="res-lbl">En uso</div></div>
+    <div class="res-card"><div class="res-num" style="color:var(--ambar)">2</div><div class="res-lbl">En revisión</div></div>
+    <div class="res-card"><div class="res-num" style="color:var(--rojo)">1</div><div class="res-lbl">Avería</div></div>
+  </div>
+
+  <!-- ═══════════ PANELES HERRAMIENTAS MANUALES ═══════════ -->
+  <div class="seccion-lbl">Paneles de herramientas manuales</div>
+
+  <!-- PANEL A -->
+  <div class="panel">
+    <div class="panel-hdr" onclick="togglePanel('pA')">
+      <div class="panel-izq">
+        <div class="panel-ico"><i class="ti ti-hand-grab"></i></div>
+        <div>
+          <div class="panel-titulo">Panel A — Herramientas de sujeción</div>
+          <div class="panel-sub">Tornillo de banco · Sargentos · Tenazas</div>
+        </div>
+      </div>
+      <div class="panel-der">
+        <span class="bdg bdg-ok">Completo</span>
+        <i class="ti ti-chevron-down" id="ico-pA" style="color:var(--gris-s)"></i>
+      </div>
+    </div>
+    <div class="panel-body" id="pA">
+      <div class="herr-grid">
+        <div class="herr"><span class="herr-nom">Tornillo de banco 150 mm</span><span class="herr-est est-ok">Disponible</span></div>
+        <div class="herr"><span class="herr-nom">Tornillo de banco 200 mm</span><span class="herr-est est-ok">Disponible</span></div>
+        <div class="herr"><span class="herr-nom">Sargento 300 mm (×4)</span><span class="herr-est est-ok">Disponible</span></div>
+        <div class="herr"><span class="herr-nom">Sargento 600 mm (×2)</span><span class="herr-est est-ok">Disponible</span></div>
+        <div class="herr"><span class="herr-nom">Tenazas de carpintero</span><span class="herr-est est-ok">Disponible</span></div>
+        <div class="herr"><span class="herr-nom">Tenazas universales</span><span class="herr-est est-falta">Falta</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PANEL B -->
+  <div class="panel">
+    <div class="panel-hdr" onclick="togglePanel('pB')">
+      <div class="panel-izq">
+        <div class="panel-ico"><i class="ti ti-hammer"></i></div>
+        <div>
+          <div class="panel-titulo">Panel B — Herramientas de golpear</div>
+          <div class="panel-sub">Martillos · Mazas · Punzones · Botadores · Cortafríos</div>
+        </div>
+      </div>
+      <div class="panel-der">
+        <span class="bdg bdg-ok">Completo</span>
+        <i class="ti ti-chevron-down" id="ico-pB" style="color:var(--gris-s)"></i>
+      </div>
+    </div>
+    <div class="panel-body" id="pB">
+      <div class="herr-grid">
+        <div class="herr"><span class="herr-nom">Martillo de bola 500 g</span><span class="herr-est est-ok">Disponible</span></div>
+        <div class="herr"><span class="herr-nom">Martillo de bola 1000 g</span><span class="herr-est est-ok">Disponible</span></div>
+        <div class="herr"><span class="herr-nom">Maza de goma 1 kg</span><span class="herr-est est-ok">Disponible</span></div>
+        <div class="herr"><span class="herr-nom">Maza de acero 2 kg</span><span class="herr-est est-ok">Disponible</span></div>
+        <div class="herr"><span class="herr-nom">Punzones de punta (×4)</span><span class="herr-est est-ok">Disponible</span></div>
+        <div class="herr"><span class="herr-nom">Botadores (×3)</span><span class="herr-est est-ok">Disponible</span></div>
+        <div class="herr"><span class="herr-nom">Cortafríos plano 20 mm</span><span class="herr-est est-ok">Disponible</span></div>
+        <div class="herr"><span class="herr-nom">Cortafríos plano 30 mm</span><span class="herr-est est-revision">Revisar filo</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PANEL C -->
+  <div class="panel">
+    <div class="panel-hdr" onclick="togglePanel('pC')">
+      <div class="panel-izq">
+        <div class="panel-ico"><i class="ti ti-settings"></i></div>
+        <div>
+          <div class="panel-titulo">Panel C — Llaves y destornilladores</div>
+          <div class="panel-sub">Llaves fijas · Inglesa · Grifa · Dinámo. · Destornilladores</div>
+        </div>
+      </div>
+      <div class="panel-der">
+        <span class="bdg bdg-ok">Completo</span>
+        <i class="ti ti-chevron-down" id="ico-pC" style="color:var(--gris-s)"></i>
+      </div>
+    </div>
+    <div class="panel-body" id="pC">
+      <div class="herr-grid">
+        <div class="herr"><span class="herr-nom">Juego llaves fijas 6-32 mm</span><span class="herr-est est-ok">Disponible</span></div>
+        <div class="herr"><span class="herr-nom">Juego llaves combinadas 8-24 mm</span><span class="herr-est est-ok">Disponible</span></div>
+        <div class="herr"><span class="herr-nom">Juego llaves Allen métricas</span><span class="herr-est est-ok">Disponible</span></div>
+        <div class="herr"><span class="herr-nom">Llave inglesa 200 mm</span><span class="herr-est est-ok">Disponible</span></div>
+        <div class="herr"><span class="herr-nom">Llave inglesa 300 mm</span><span class="herr-est est-ok">Disponible</span></div>
+        <div class="herr"><span class="herr-nom">Llave grifa 14"</span><span class="herr-est est-ok">Disponible</span></div>
+        <div class="herr"><span class="herr-nom">Llave de gancho ajustable</span><span class="herr-est est-ok">Disponible</span></div>
+        <div class="herr"><span class="herr-nom">Llave dinamométrica 1/2" (20-200 N·m)</span><span class="herr-est est-ok">Disponible</span></div>
+        <div class="herr"><span class="herr-nom">Juego destornilladores planos (×5)</span><span class="herr-est est-ok">Disponible</span></div>
+        <div class="herr"><span class="herr-nom">Juego destornilladores Phillips (×4)</span><span class="herr-est est-ok">Disponible</span></div>
+        <div class="herr"><span class="herr-nom">Destornilladores Torx (×6)</span><span class="herr-est est-ok">Disponible</span></div>
+        <div class="herr"><span class="herr-nom">Destornillador de percusión</span><span class="herr-est est-falta">Falta</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PANEL D -->
+  <div class="panel">
+    <div class="panel-hdr" onclick="togglePanel('pD')">
+      <div class="panel-izq">
+        <div class="panel-ico"><i class="ti ti-cut"></i></div>
+        <div>
+          <div class="panel-titulo">Panel D — Herramientas de corte</div>
+          <div class="panel-sub">Sierra de arco · Cizalla · Cortatubos · Alicates · Limas</div>
+        </div>
+      </div>
+      <div class="panel-der">
+        <span class="bdg bdg-ok">Completo</span>
+        <i class="ti ti-chevron-down" id="ico-pD" style="color:var(--gris-s)"></i>
+      </div>
+    </div>
+    <div class="panel-body" id="pD">
+      <div class="herr-grid">
+        <div class="herr"><span class="herr-nom">Sierra de arco metales (ajustable)</span><span class="herr-est est-ok">Disponible</span></div>
+        <div class="herr"><span class="herr-nom">Hojas sierra de arco (×10)</span><span class="herr-est est-ok">Disponible</span></div>
+        <div class="herr"><span class="herr-nom">Cizalla 300 mm</span><span class="herr-est est-ok">Disponible</span></div>
+        <div class="herr"><span class="herr-nom">Tijeras cortachapas 250 mm</span><span class="herr-est est-ok">Disponible</span></div>
+        <div class="herr"><span class="herr-nom">Cortatubos 6-35 mm</span><span class="herr-est est-ok">Disponible</span></div>
+        <div class="herr"><span class="herr-nom">Alicates universales 200 mm</span><span class="herr-est est-ok">Disponible</span></div>
+        <div class="herr"><span class="herr-nom">Alicates de punta fina</span><span class="herr-est est-ok">Disponible</span></div>
+        <div class="herr"><span class="herr-nom">Alicates de presión (×2)</span><span class="herr-est est-ok">Disponible</span></div>
+        <div class="herr"><span class="herr-nom">Juego limas planas bastarda/fina</span><span class="herr-est est-ok">Disponible</span></div>
+        <div class="herr"><span class="herr-nom">Juego limas media caña</span><span class="herr-est est-ok">Disponible</span></div>
+        <div class="herr"><span class="herr-nom">Limatones (cola de ratón) (×3)</span><span class="herr-est est-ok">Disponible</span></div>
+        <div class="herr"><span class="herr-nom">Escofina plana madera</span><span class="herr-est est-revision">Revisar</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PANEL E -->
+  <div class="panel">
+    <div class="panel-hdr" onclick="togglePanel('pE')">
+      <div class="panel-izq">
+        <div class="panel-ico"><i class="ti ti-ruler-measure"></i></div>
+        <div>
+          <div class="panel-titulo">Panel E — Aparatos de medida y verificación</div>
+          <div class="panel-sub">Pie de rey · Galgas · Micrómetro · Reloj comparador</div>
+        </div>
+      </div>
+      <div class="panel-der">
+        <span class="bdg bdg-ok">Completo</span>
+        <i class="ti ti-chevron-down" id="ico-pE" style="color:var(--gris-s)"></i>
+      </div>
+    </div>
+    <div class="panel-body" id="pE">
+      <div class="herr-grid">
+        <div class="herr"><span class="herr-nom">Cinta métrica 5 m (×3)</span><span class="herr-est est-ok">Disponible</span></div>
+        <div class="herr"><span class="herr-nom">Regla graduada 300 mm</span><span class="herr-est est-ok">Disponible</span></div>
+        <div class="herr"><span class="herr-nom">Calibre pie de rey 150 mm digital</span><span class="herr-est est-ok">Disponible</span></div>
+        <div class="herr"><span class="herr-nom">Calibre pie de rey 150 mm nonio</span><span class="herr-est est-ok">Disponible</span></div>
+        <div class="herr"><span class="herr-nom">Galgas de espesores 0,05–1 mm</span><span class="herr-est est-ok">Disponible</span></div>
+        <div class="herr"><span class="herr-nom">Galgas de roscas métricas</span><span class="herr-est est-ok">Disponible</span></div>
+        <div class="herr"><span class="herr-nom">Galgas de roscas Whitworth</span><span class="herr-est est-ok">Disponible</span></div>
+        <div class="herr"><span class="herr-nom">Micrómetro exterior 0-25 mm</span><span class="herr-est est-ok">Disponible</span></div>
+        <div class="herr"><span class="herr-nom">Micrómetro exterior 25-50 mm</span><span class="herr-est est-ok">Disponible</span></div>
+        <div class="herr"><span class="herr-nom">Reloj comparador 0,01 mm</span><span class="herr-est est-ok">Disponible</span></div>
+        <div class="herr"><span class="herr-nom">Multímetro digital</span><span class="herr-est est-ok">Disponible</span></div>
+        <div class="herr"><span class="herr-nom">Nivel de burbuja 600 mm</span><span class="herr-est est-ok">Disponible</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ EQUIPOS INDIVIDUALES ═══════════ -->
+  <div class="seccion-lbl">Equipos — ficha individual</div>
+
+  <!-- Soldador inverter MMA -->
+  <div class="equipo disponible" id="eq1">
+    <div class="eq-hdr">
+      <div class="eq-izq">
+        <div class="eq-ico"><i class="ti ti-flame"></i></div>
+        <div>
+          <div class="eq-titulo">Soldador inverter MMA</div>
+          <div class="eq-modelo">Zona: Área de soldadura · Nº inventario: TLL-SOL-001</div>
+        </div>
+      </div>
+      <div class="eq-der">
+        <span class="bdg bdg-ok">Disponible</span>
+        <a class="btn-manual" href="https://jet-arco.com/wp-content/uploads/2023/03/J903MS-MANUAL-DE-INSTRUCCIONES.pdf" target="_blank"><i class="ti ti-book"></i><span>Manual</span></a>
+      </div>
+    </div>
+    <div class="eq-info">
+      <div class="eq-dato"><span class="eq-dato-lbl">Última revisión: </span><span class="eq-dato-val">12 mar 2025</span></div>
+      <div class="eq-dato"><span class="eq-dato-lbl">Próxima revisión: </span><span class="eq-dato-val">12 mar 2026</span></div>
+      <div class="eq-dato"><span class="eq-dato-lbl">Responsable: </span><span class="eq-dato-val">Equipo alumnado 1º CMA</span></div>
+      <div class="eq-dato"><span class="eq-dato-lbl">Observaciones: </span><span class="eq-dato-val">Corriente regulable 20–200 A · Tecnología IGBT · Antipegado</span></div>
+    </div>
+    <div>
+      <button class="btn-problema" onclick="abrirModal('eq1','problema','Soldador inverter MMA')"><i class="ti ti-alert-triangle"></i>Reportar problema</button>
+      <button class="btn-registrar" onclick="abrirModal('eq1','uso','Soldador inverter MMA')"><i class="ti ti-check"></i>Registrar uso</button>
+    </div>
+    <div class="reporte" id="rep-eq1"></div>
+    <div class="registro" id="reg-eq1"></div>
+  </div>
+
+  <!-- Soldador MIG -->
+  <div class="equipo disponible" id="eq2">
+    <div class="eq-hdr">
+      <div class="eq-izq">
+        <div class="eq-ico"><i class="ti ti-flame"></i></div>
+        <div>
+          <div class="eq-titulo">Equipo de soldadura MIG</div>
+          <div class="eq-modelo">Zona: Área de soldadura · Nº inventario: TLL-SOL-002</div>
+        </div>
+      </div>
+      <div class="eq-der">
+        <span class="bdg bdg-ok">Disponible</span>
+        <a class="btn-manual" href="https://galagar.com/wp-content/uploads/2022/01/M-MIG-250-sin.pdf" target="_blank"><i class="ti ti-book"></i><span>Manual</span></a>
+      </div>
+    </div>
+    <div class="eq-info">
+      <div class="eq-dato"><span class="eq-dato-lbl">Última revisión: </span><span class="eq-dato-val">15 ene 2025</span></div>
+      <div class="eq-dato"><span class="eq-dato-lbl">Próxima revisión: </span><span class="eq-dato-val">15 ene 2026</span></div>
+      <div class="eq-dato"><span class="eq-dato-lbl">Responsable: </span><span class="eq-dato-val">Equipo alumnado 1º CMA</span></div>
+      <div class="eq-dato"><span class="eq-dato-lbl">Observaciones: </span><span class="eq-dato-val">Soldadura GMAW con gas protector CO₂/Ar · Hilo 0,8–1,0 mm · Revisar tobera antes de uso</span></div>
+    </div>
+    <div>
+      <button class="btn-problema" onclick="abrirModal('eq2','problema','Equipo de soldadura MIG')"><i class="ti ti-alert-triangle"></i>Reportar problema</button>
+      <button class="btn-registrar" onclick="abrirModal('eq2','uso','Equipo de soldadura MIG')"><i class="ti ti-check"></i>Registrar uso</button>
+    </div>
+    <div class="reporte" id="rep-eq2"></div>
+    <div class="registro" id="reg-eq2"></div>
+  </div>
+
+  <!-- Compresor -->
+  <div class="equipo en-uso" id="eq3">
+    <div class="eq-hdr">
+      <div class="eq-izq">
+        <div class="eq-ico"><i class="ti ti-wind"></i></div>
+        <div>
+          <div class="eq-titulo">Compresor de aire de pistón</div>
+          <div class="eq-modelo">Zona: Área de compresores · Nº inventario: TLL-COM-001</div>
+        </div>
+      </div>
+      <div class="eq-der">
+        <span class="bdg bdg-uso">En uso</span>
+        <a class="btn-manual" href="https://media.adeo.com/media/2576495/media.pdf" target="_blank"><i class="ti ti-book"></i><span>Manual</span></a>
+      </div>
+    </div>
+    <div class="eq-info">
+      <div class="eq-dato"><span class="eq-dato-lbl">Última revisión: </span><span class="eq-dato-val">20 abr 2025</span></div>
+      <div class="eq-dato"><span class="eq-dato-lbl">Próxima revisión: </span><span class="eq-dato-val">20 abr 2026</span></div>
+      <div class="eq-dato"><span class="eq-dato-lbl">Responsable: </span><span class="eq-dato-val">Equipo alumnado 1º CMA</span></div>
+      <div class="eq-dato"><span class="eq-dato-lbl">Observaciones: </span><span class="eq-dato-val">Purgar depósito tras cada uso · Comprobar nivel aceite cárter mensualmente · Presión máx. 10 bar</span></div>
+    </div>
+    <div>
+      <button class="btn-problema" onclick="abrirModal('eq3','problema','Compresor de aire de pistón')"><i class="ti ti-alert-triangle"></i>Reportar problema</button>
+      <button class="btn-registrar" onclick="abrirModal('eq3','uso','Compresor de aire de pistón')"><i class="ti ti-check"></i>Registrar uso</button>
+    </div>
+    <div class="reporte" id="rep-eq3"></div>
+    <div class="registro" id="reg-eq3"></div>
+  </div>
+
+  <!-- Taladro columna -->
+  <div class="equipo averia" id="eq4">
+    <div class="eq-hdr">
+      <div class="eq-izq">
+        <div class="eq-ico"><i class="ti ti-circle-dotted"></i></div>
+        <div>
+          <div class="eq-titulo">Taladro de columna</div>
+          <div class="eq-modelo">Zona: Área de mecanizado · Nº inventario: TLL-TAL-001</div>
+        </div>
+      </div>
+      <div class="eq-der">
+        <span class="bdg bdg-av">Avería</span>
+        <a class="btn-manual" href="https://yagueimportaciones.com/files/declaracion-ce/manual-ya-2125.pdf" target="_blank"><i class="ti ti-book"></i><span>Manual</span></a>
+      </div>
+    </div>
+    <div class="eq-info">
+      <div class="eq-dato"><span class="eq-dato-lbl">Última revisión: </span><span class="eq-dato-val">10 feb 2025</span></div>
+      <div class="eq-dato"><span class="eq-dato-lbl">Próxima revisión: </span><span class="eq-dato-val">10 feb 2026</span></div>
+      <div class="eq-dato"><span class="eq-dato-lbl">Responsable: </span><span class="eq-dato-val">Equipo alumnado 1º CMA</span></div>
+      <div class="eq-dato"><span class="eq-dato-lbl">Avería reportada: </span><span class="eq-dato-val" style="color:var(--rojo-txt)">Interruptor de encendido defectuoso — pendiente reparación</span></div>
+    </div>
+    <div>
+      <button class="btn-problema" onclick="abrirModal('eq4','problema','Taladro de columna')"><i class="ti ti-alert-triangle"></i>Reportar problema</button>
+      <button class="btn-registrar" onclick="abrirModal('eq4','uso','Taladro de columna')"><i class="ti ti-check"></i>Registrar reparación</button>
+    </div>
+    <div class="reporte" id="rep-eq4"></div>
+    <div class="registro" id="reg-eq4"></div>
+  </div>
+
+  <!-- Esmeriladora de banco -->
+  <div class="equipo disponible" id="eq5">
+    <div class="eq-hdr">
+      <div class="eq-izq">
+        <div class="eq-ico"><i class="ti ti-circle"></i></div>
+        <div>
+          <div class="eq-titulo">Esmeriladora de banco</div>
+          <div class="eq-modelo">Zona: Área de mecanizado · Nº inventario: TLL-ESM-001</div>
+        </div>
+      </div>
+      <div class="eq-der">
+        <span class="bdg bdg-ok">Disponible</span>
+        <a class="btn-manual" href="https://cdn.manomano.com/files/pdf/11751799.pdf" target="_blank"><i class="ti ti-book"></i><span>Manual</span></a>
+      </div>
+    </div>
+    <div class="eq-info">
+      <div class="eq-dato"><span class="eq-dato-lbl">Última revisión: </span><span class="eq-dato-val">5 mar 2025</span></div>
+      <div class="eq-dato"><span class="eq-dato-lbl">Próxima revisión: </span><span class="eq-dato-val">5 mar 2026</span></div>
+      <div class="eq-dato"><span class="eq-dato-lbl">Responsable: </span><span class="eq-dato-val">Equipo alumnado 1º CMA</span></div>
+      <div class="eq-dato"><span class="eq-dato-lbl">Observaciones: </span><span class="eq-dato-val">Muela grano 36 (desbaste) y grano 60 (acabado) · Usar gafas siempre · Comprobar protectores antes de arrancar</span></div>
+    </div>
+    <div>
+      <button class="btn-problema" onclick="abrirModal('eq5','problema','Esmeriladora de banco')"><i class="ti ti-alert-triangle"></i>Reportar problema</button>
+      <button class="btn-registrar" onclick="abrirModal('eq5','uso','Esmeriladora de banco')"><i class="ti ti-check"></i>Registrar uso</button>
+    </div>
+    <div class="reporte" id="rep-eq5"></div>
+    <div class="registro" id="reg-eq5"></div>
+  </div>
+
+  <!-- Equipo oxiacetilénico -->
+  <div class="equipo revision" id="eq6">
+    <div class="eq-hdr">
+      <div class="eq-izq">
+        <div class="eq-ico"><i class="ti ti-flame-off"></i></div>
+        <div>
+          <div class="eq-titulo">Equipo oxiacetilénico (autógena)</div>
+          <div class="eq-modelo">Zona: Área de soldadura · Nº inventario: TLL-OXI-001</div>
+        </div>
+      </div>
+      <div class="eq-der">
+        <span class="bdg bdg-rev">En revisión</span>
+      </div>
+    </div>
+    <div class="eq-info">
+      <div class="eq-dato"><span class="eq-dato-lbl">Última revisión: </span><span class="eq-dato-val">1 jun 2025</span></div>
+      <div class="eq-dato"><span class="eq-dato-lbl">Próxima revisión: </span><span class="eq-dato-val">1 jun 2026</span></div>
+      <div class="eq-dato"><span class="eq-dato-lbl">Responsable: </span><span class="eq-dato-val">Equipo alumnado 1º CMA</span></div>
+      <div class="eq-dato"><span class="eq-dato-lbl">Observaciones: </span><span class="eq-dato-val">Recarga botellas en curso — doble función: soldadura fuerte y corte de metal</span></div>
+    </div>
+    <div>
+      <button class="btn-problema" onclick="abrirModal('eq6','problema','Equipo oxiacetilénico')"><i class="ti ti-alert-triangle"></i>Reportar problema</button>
+      <button class="btn-registrar" onclick="abrirModal('eq6','uso','Equipo oxiacetilénico')"><i class="ti ti-check"></i>Registrar revisión</button>
+    </div>
+    <div class="reporte" id="rep-eq6"></div>
+    <div class="registro" id="reg-eq6"></div>
+  </div>
+
+  <!-- Banco de trabajo -->
+  <div class="equipo en-uso" id="eq7">
+    <div class="eq-hdr">
+      <div class="eq-izq">
+        <div class="eq-ico"><i class="ti ti-table"></i></div>
+        <div>
+          <div class="eq-titulo">Banco de trabajo (×3)</div>
+          <div class="eq-modelo">Zona: Área central taller · Nº inventario: TLL-BAN-001/002/003</div>
+        </div>
+      </div>
+      <div class="eq-der">
+        <span class="bdg bdg-uso">En uso</span>
+      </div>
+    </div>
+    <div class="eq-info">
+      <div class="eq-dato"><span class="eq-dato-lbl">Última revisión: </span><span class="eq-dato-val">20 may 2025</span></div>
+      <div class="eq-dato"><span class="eq-dato-lbl">Próxima revisión: </span><span class="eq-dato-val">20 may 2026</span></div>
+      <div class="eq-dato"><span class="eq-dato-lbl">Responsable: </span><span class="eq-dato-val">Equipo alumnado 1º CMA</span></div>
+      <div class="eq-dato"><span class="eq-dato-lbl">Observaciones: </span><span class="eq-dato-val">Cada banco dotado de tornillo de banco · Superficie metálica para soldadura</span></div>
+    </div>
+    <div>
+      <button class="btn-problema" onclick="abrirModal('eq7','problema','Banco de trabajo')"><i class="ti ti-alert-triangle"></i>Reportar problema</button>
+      <button class="btn-registrar" onclick="abrirModal('eq7','uso','Banco de trabajo')"><i class="ti ti-check"></i>Registrar uso</button>
+    </div>
+    <div class="reporte" id="rep-eq7"></div>
+    <div class="registro" id="reg-eq7"></div>
+  </div>
+
+  <!-- Equipo de engrase -->
+  <div class="equipo disponible" id="eq8">
+    <div class="eq-hdr">
+      <div class="eq-izq">
+        <div class="eq-ico"><i class="ti ti-droplet-filled"></i></div>
+        <div>
+          <div class="eq-titulo">Equipo de engrase y lubricación</div>
+          <div class="eq-modelo">Zona: Almacén lubricantes · Nº inventario: TLL-ENG-001</div>
+        </div>
+      </div>
+      <div class="eq-der">
+        <span class="bdg bdg-ok">Disponible</span>
+      </div>
+    </div>
+    <div class="eq-info">
+      <div class="eq-dato"><span class="eq-dato-lbl">Última revisión: </span><span class="eq-dato-val">1 may 2025</span></div>
+      <div class="eq-dato"><span class="eq-dato-lbl">Próxima revisión: </span><span class="eq-dato-val">1 may 2026</span></div>
+      <div class="eq-dato"><span class="eq-dato-lbl">Responsable: </span><span class="eq-dato-val">Equipo alumnado 1º CMA</span></div>
+      <div class="eq-dato"><span class="eq-dato-lbl">Observaciones: </span><span class="eq-dato-val">Pistola de grasa manual + bomba de aceite neumática · Depósito de recogida aceites usados junto a almacén</span></div>
+    </div>
+    <div>
+      <button class="btn-problema" onclick="abrirModal('eq8','problema','Equipo de engrase y lubricación')"><i class="ti ti-alert-triangle"></i>Reportar problema</button>
+      <button class="btn-registrar" onclick="abrirModal('eq8','uso','Equipo de engrase y lubricación')"><i class="ti ti-check"></i>Registrar uso</button>
+    </div>
+    <div class="reporte" id="rep-eq8"></div>
+    <div class="registro" id="reg-eq8"></div>
+  </div>
+
+  <!-- LEYENDA -->
+  <div class="leyenda" style="margin-top:18px">
+    <strong>Estado de los equipos</strong>
+    <div class="leyenda-fila"><div class="dot" style="background:var(--verde)"></div>Disponible — listo para usar</div>
+    <div class="leyenda-fila"><div class="dot" style="background:var(--azul-claro)"></div>En uso — equipo ocupado en este momento</div>
+    <div class="leyenda-fila"><div class="dot" style="background:var(--ambar)"></div>En revisión — pendiente de comprobación o mantenimiento</div>
+    <div class="leyenda-fila"><div class="dot" style="background:var(--rojo)"></div>Avería — fuera de servicio, pendiente reparación</div>
+    <div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--gris-b)">
+      Los botones <strong style="color:var(--azul-txt)">Manual</strong> abren el manual de instrucciones del equipo en castellano (requiere conexión).
+    </div>
+  </div>
+
+  <div class="pie">
+    <strong>Formulario demostrativo</strong> · Procedimiento Selectivo de Ingreso · Cuerpo 0590 · Especialidad 216 · Operaciones y Equipos de Producción Agraria<br>
+    <strong>Manuel Ángel Alcántara Izquierdo</strong> · CIFP La Granja<br>
+    <span style="color:#9ca3af">Herramienta generada con PowerApps + Power Automate</span>
+  </div>
+
+</div>
+
+<script>
+  // Toggle paneles
+  function togglePanel(id) {
+    const body = document.getElementById(id);
+    const ico = document.getElementById('ico-' + id);
+    if (body.classList.contains('open')) {
+      body.classList.remove('open');
+      ico.style.transform = '';
+    } else {
+      body.classList.add('open');
+      ico.style.transform = 'rotate(180deg)';
+    }
+  }
+
+  // Modal
+  let modalActual = null;
+  let modalTipo = null;
+
+  function abrirModal(id, tipo, nombre) {
+    modalActual = id;
+    modalTipo = tipo;
+    const titulo = tipo === 'problema' ? 'Reportar problema' : 'Registrar uso / intervención';
+    document.getElementById('modal-titulo').textContent = titulo;
+    document.getElementById('modal-sub').textContent = nombre;
+    const hoy = new Date().toISOString().split('T')[0];
+    document.getElementById('inp-fecha').value = hoy;
+    document.getElementById('inp-nombre').value = '';
+    document.getElementById('inp-obs').value = '';
+    document.getElementById('modal').classList.add('visible');
+    document.getElementById('inp-nombre').focus();
+  }
+
+  function cerrarModal() {
+    document.getElementById('modal').classList.remove('visible');
+    modalActual = null;
+  }
+
+  function guardarModal() {
+    const nombre = document.getElementById('inp-nombre').value.trim();
+    const fecha = document.getElementById('inp-fecha').value;
+    const obs = document.getElementById('inp-obs').value.trim();
+    if (!nombre) { document.getElementById('inp-nombre').focus(); return; }
+    const fechaFmt = fecha ? new Date(fecha).toLocaleDateString('es-ES', {day:'2-digit', month:'short', year:'numeric'}) : '—';
+    if (modalTipo === 'problema') {
+      const el = document.getElementById('rep-' + modalActual);
+      el.style.display = 'block';
+      el.innerHTML = '<strong><i class="ti ti-alert-triangle" style="font-size:12px;vertical-align:-1px"></i> Problema reportado</strong> · ' + nombre + ' · ' + fechaFmt + (obs ? '<br>' + obs : '');
+      const eq = document.getElementById(modalActual);
+      eq.className = eq.className.replace(/disponible|en-uso|revision/, 'averia');
+      const bdg = eq.querySelector('.bdg');
+      if (bdg) { bdg.className = 'bdg bdg-av'; bdg.textContent = 'Avería'; }
+    } else {
+      const el = document.getElementById('reg-' + modalActual);
+      el.style.display = 'block';
+      el.innerHTML = '<strong><i class="ti ti-check" style="font-size:12px;vertical-align:-1px"></i> Uso registrado</strong> · ' + nombre + ' · ' + fechaFmt + (obs ? '<br>' + obs : '');
+    }
+    cerrarModal();
+  }
+
+  document.getElementById('modal').addEventListener('click', function(e) {
+    if (e.target === this) cerrarModal();
+  });
+</script>
+</body>
+</html>
